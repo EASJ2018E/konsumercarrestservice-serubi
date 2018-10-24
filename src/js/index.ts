@@ -11,6 +11,7 @@ interface ICar {
     price:number;
 }
 
+let divElement:HTMLDivElement = <HTMLDivElement> document.getElementById("content");
 let buttonElement:HTMLButtonElement = <HTMLButtonElement>document.getElementById('getAllButton');
 buttonElement.addEventListener('click', showAllCars);
 
@@ -24,8 +25,14 @@ function showAllCars():void {
             result += "<li>" + car.model + " " + car.vendor + " - " + car.price.toString() + ",-" + "</li>";
         });
         result += "</ol>";
+
+        divElement.innerHTML = result;
     })
-    .catch()
+    .catch(function (error:AxiosError):void {
+        if(error.response) {
+            divElement.innerHTML = error.message;
+        }
+    })
 }
 
 // interface Person {
