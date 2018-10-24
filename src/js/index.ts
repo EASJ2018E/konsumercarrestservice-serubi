@@ -11,6 +11,23 @@ interface ICar {
     price:number;
 }
 
+let buttonElement:HTMLButtonElement = <HTMLButtonElement>document.getElementById('getAllButton');
+buttonElement.addEventListener('click', showAllCars);
+
+function showAllCars():void {
+    let uri: string = "http://rest-pele-easj-dk.azurewebsites.net/api/Cars";
+
+    axios.get<ICar[]>(uri)
+    .then(function(response:AxiosResponse<ICar[]>):void {
+        let result:string = "<ol>";
+        response.data.forEach((car:ICar) => {
+            result += "<li>" + car.model + " " + car.vendor + " - " + car.price.toString() + ",-" + "</li>";
+        });
+        result += "</ol>";
+    })
+    .catch()
+}
+
 // interface Person {
 //     firstName: string;
 //     lastName: string;
