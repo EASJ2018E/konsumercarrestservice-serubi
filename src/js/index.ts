@@ -6,23 +6,30 @@ import axios, {
 // http://rest-pele-easj-dk.azurewebsites.net/api/Cars
 
 interface ICar {
-    model:string;
     vendor:string;
+    model: string;
     price:number;
 }
+
+let uri: string = "http://rest-pele-easj-dk.azurewebsites.net/api/Cars";
 
 let divElement:HTMLDivElement = <HTMLDivElement> document.getElementById("content");
 let buttonElement:HTMLButtonElement = <HTMLButtonElement>document.getElementById('getAllButton');
 buttonElement.addEventListener('click', showAllCars);
 
-function showAllCars():void {
-    let uri: string = "http://rest-pele-easj-dk.azurewebsites.net/api/Cars";
+let buttonAdd:HTMLButtonElement = <HTMLButtonElement>document.getElementById('addButton');
+buttonAdd.addEventListener('click', addCar);
 
+function showAllCars():void {
     axios.get<ICar[]>(uri)
     .then(function(response:AxiosResponse<ICar[]>):void {
         let result:string = "<ol>";
         response.data.forEach((car:ICar) => {
-            result += "<li>" + car.model + " " + car.vendor + " - " + car.price.toString() + ",-" + "</li>";
+
+            if(car)
+                result += "<li>" + car.vendor + " " + car.model + " - " + car.price.toString() + ",-" + "</li>";
+            else
+                result += "<li style='color:red;'>NULL element</li>";
         });
         result += "</ol>";
 
@@ -35,15 +42,20 @@ function showAllCars():void {
     })
 }
 
-// interface Person {
-//     firstName: string;
-//     lastName: string;
-// }
+function addCar():void {
+    let addVendorElement:HTMLInputElement = <HTMLInputElement>document.getElementById('addVendor');
+    let addModelElement:HTMLInputElement = <HTMLInputElement>document.getElementById('addModel');
+    let addPriceElement:HTMLInputElement = <HTMLInputElement>document.getElementById('addPrice');
 
-// function greeter(person: Person): string {
-//     return "Hello, " + person.firstName + " " + person.lastName;
-// }
-// let user: Person = { firstName: "John", lastName: "Doe" };
+    let myVendor:string = addVendorElement.value;
+    let myModel:string = addModelElement.value;
+    let myPrice:number = +addPriceElement.value;
 
-// let element: HTMLDivElement = <HTMLDivElement> document.getElementById("content");
-// element.innerHTML = greeter(user);
+    axios.post<ICar>(uri, {model:myModel, vendor:myVendor, price:myPrice})
+    .then((response:AxiosResponse) => {console.log("response " + response.status + " " +  response.statusText)})
+    .catch(function (error: AxiosError): void {
+        if (error.response) {
+            console.log(error.message);
+        }
+    })
+}
